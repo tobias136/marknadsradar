@@ -9,7 +9,7 @@ Det här är ett Android-projekt som packar hela Marknadsradar i en app. Python,
 ## Bygg APK utan att installera något på datorn (GitHub)
 1. Skapa ett **privat** repo på github.com och ladda upp hela mappen `marknadsradar` (så att `android-app/` och `.github/` ligger i repots rot).
 2. Gå till fliken **Actions**, välj **Bygg Android-APK** och tryck **Run workflow**. Bygget tar cirka 10–20 minuter.
-3. När det är klart: öppna körningen och ladda ner **Marknadsradar-apk** längst ner. Packa upp zip-filen, du får `app-debug.apk`.
+3. När det är klart hittar du APK:n under **Releases** (till höger på repots startsida) som `Marknadsradar.apk`, och som zip under körningen (**Marknadsradar-apk**).
 
 ## Bygg i Android Studio
 1. Installera Android Studio och öppna mappen `android-app`.
@@ -20,7 +20,7 @@ Det här är ett Android-projekt som packar hela Marknadsradar i en app. Python,
 1. Skicka APK-filen till telefonen (mejl, Drive, USB).
 2. Öppna filen. Android frågar om du tillåter installation från den appen (Chrome, Filer, …). Tillåt det.
 3. Första starten tar en stund (10–30 sekunder) eftersom Python och pandas startar. Därefter öppnas Marknadsradar.
-4. Nya versioner kan installeras direkt över den gamla, så din data finns kvar. Det fungerar bara om alla bygge signeras med samma nyckel. Nyckeln ligger som hemligheter i GitHub (`MR_KEYSTORE_BASE64`, `MR_KEYSTORE_PASSWORD`, `MR_KEY_ALIAS`, `MR_KEY_PASSWORD`) och aldrig i repot. Utan dem får varje bygge en ny tillfällig nyckel. Avinstallerar du appen raderas datan, så ta en säkerhetskopia först (Claude-export eller exportfunktionerna i appen).
+4. Nya versioner kan installeras direkt över den gamla, så din data finns kvar. Det fungerar bara om alla bygge signeras med samma nyckel. Nyckelfilen ligger som en hemlighet i GitHub (`MR_KEYSTORE_BASE64`, lösenord och alias är fasta: `marknadsradar`) och aldrig i repot. Utan dem får varje bygge en ny tillfällig nyckel. Avinstallerar du appen raderas datan, så ta en säkerhetskopia först (Claude-export eller exportfunktionerna i appen).
 
 ## Hur det hänger ihop
 - `MainActivity.kt` startar Python (Chaquopy), startar servern på `127.0.0.1:8765` och visar den i en WebView. Servern kräver en slumpad nyckel som bara appen känner till, så andra appar på telefonen kommer inte åt dina data.

@@ -10,6 +10,9 @@ on:
       - "static/**"
       - ".github/workflows/android.yml"
 
+permissions:
+  contents: write   # behövs för att lägga APK:n som release
+
 jobs:
   apk:
     runs-on: ubuntu-latest
@@ -35,9 +38,10 @@ jobs:
           if [ -n "$KS_B64" ]; then
             echo "$KS_B64" | base64 -d > "$RUNNER_TEMP/release.keystore"
             echo "MR_KEYSTORE_FILE=$RUNNER_TEMP/release.keystore" >> "$GITHUB_ENV"
-            echo "MR_KEYSTORE_PASSWORD=${{ secrets.MR_KEYSTORE_PASSWORD }}" >> "$GITHUB_ENV"
-            echo "MR_KEY_ALIAS=${{ secrets.MR_KEY_ALIAS }}" >> "$GITHUB_ENV"
-            echo "MR_KEY_PASSWORD=${{ secrets.MR_KEY_PASSWORD }}" >> "$GITHUB_ENV"
+            # Själva nyckelfilen är hemligheten. Lösenord och alias är fasta.
+            echo "MR_KEYSTORE_PASSWORD=marknadsradar" >> "$GITHUB_ENV"
+            echo "MR_KEY_ALIAS=marknadsradar" >> "$GITHUB_ENV"
+            echo "MR_KEY_PASSWORD=marknadsradar" >> "$GITHUB_ENV"
           else
             echo "::warning::Ingen signeringsnyckel hittades. APK:n får en tillfällig nyckel och kan inte installeras över en tidigare version."
           fi
@@ -55,3 +59,13 @@ jobs:
           name: Marknadsradar-apk
           path: android-app/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
+
+      - name: Lägg APK som release (enkel nedladdning från telefonen)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp android-app/app/build/outputs/apk/debug/app-debug.apk Marknadsradar.apk
+          gh release create "apk-${{ github.run_number }}" Marknadsradar.apk \
+            --title "Marknadsradar APK (bygge ${{ github.run_number }})" \
+            --notes "Ladda ner Marknadsradar.apk och öppna den på telefonen. Appen innehåller bara programkoden, ingen personlig data." \
+            --latest
