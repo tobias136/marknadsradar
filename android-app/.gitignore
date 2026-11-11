@@ -1,0 +1,12 @@
+.gradle/
+build/
+local.properties
+*.iml
+.idea/
+# Kopieras in från projektets rot vid bygge (se app/build.gradle.kts, uppgiften syncSources)
+app/src/main/python/app/
+app/src/main/python/run.py
+app/src/main/assets/static/
+*.keystore
+*.jks
+keystore.b64
