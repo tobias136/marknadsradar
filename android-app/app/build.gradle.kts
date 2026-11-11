@@ -14,13 +14,21 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
-        // arm64-v8a: alla moderna telefoner. x86_64: Android-emulatorn på dator.
-        ndk { abiFilters += listOf("arm64-v8a", "x86_64") }
+        // arm64-v8a: alla moderna telefoner (och en mindre fil att ladda ner).
+        ndk { abiFilters += listOf("arm64-v8a") }
     }
 
     // Signeringsnyckeln ligger INTE i repot. Bygget läser den från miljövariabler (GitHub Secrets, se README).
     // Saknas de används Androids tillfälliga debug-nyckel: APK:n går att installera, men en senare version
     // med annan nyckel kan inte installeras över den (då måste appen avinstalleras och datan försvinner).
+    // Signera med alla tre scheman (v1+v2+v3) för bredast möjliga kompatibilitet vid installation.
+    signingConfigs {
+        getByName("debug") {
+            enableV1Signing = true
+            enableV2Signing = true
+            enableV3Signing = true
+        }
+    }
     val ksFile = System.getenv("MR_KEYSTORE_FILE")
     if (!ksFile.isNullOrEmpty() && File(ksFile).exists()) {
         signingConfigs {

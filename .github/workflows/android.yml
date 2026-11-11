@@ -60,6 +60,15 @@ jobs:
           path: android-app/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
 
+      - name: Kontrollera APK (signatur, manifest, justering)
+        run: |
+          BT=$(ls -d $ANDROID_HOME/build-tools/* | sort -V | tail -1)
+          APK=android-app/app/build/outputs/apk/debug/app-debug.apk
+          ls -l "$APK"
+          "$BT/apksigner" verify --verbose --print-certs "$APK" || true
+          "$BT/zipalign" -c -P 16 -v 4 "$APK" | tail -3 || true
+          "$BT/aapt2" dump badging "$APK" | grep -E "package:|sdkVersion|targetSdk|native-code" || true
+
       - name: Lägg APK som release (enkel nedladdning från telefonen)
         env:
           GH_TOKEN: ${{ github.token }}
